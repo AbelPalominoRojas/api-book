@@ -1,0 +1,81 @@
+package com.ironman.book.service.impl;
+
+import com.ironman.book.dto.PublisherDetailResponse;
+import com.ironman.book.dto.PublisherOverviewResponse;
+import com.ironman.book.dto.PublisherRequest;
+import com.ironman.book.dto.PublisherResponse;
+import com.ironman.book.entity.Publisher;
+import com.ironman.book.mapper.PublisherMapper;
+import com.ironman.book.repository.PublisherRepository;
+import com.ironman.book.service.PublisherService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+// Lombok annotations
+@RequiredArgsConstructor
+
+// Stereotype Spring annotation
+@Service
+public class PublisherServiceImpl implements PublisherService {
+
+    private final PublisherRepository publisherRepository;
+    private final PublisherMapper publisherMapper;
+
+
+    @Override
+    public List<PublisherOverviewResponse> findAll() {
+        return publisherRepository.findAll()
+                .stream()
+                .map(publisherMapper::toOverviewResponse)
+                .toList();
+    }
+
+    @Override
+    public PublisherDetailResponse findById(Integer id) {
+        Publisher publisher = getPublisherOrThow(id);
+
+        return publisherMapper.toDetailResponse(publisher);
+    }
+
+    @Override
+    public PublisherResponse create(PublisherRequest publisherRequest) {
+        Publisher publisher = publisherMapper.toEntity(publisherRequest);
+        publisher.setStatus(1);
+
+        Publisher publisherSaved = publisherRepository.save(publisher);
+
+        return publisherMapper.toResponse(publisherSaved);
+    }
+
+    @Override
+    public PublisherResponse update(Integer id, PublisherRequest publisherRequest) {
+        Publisher publisherFound = getPublisherOrThow(id);
+
+        publisherMapper.updateEntity(publisherFound, publisherRequest);
+
+        Publisher publisherUpdated = publisherRepository.save(publisherFound);
+
+        return publisherMapper.toResponse(publisherUpdated);
+    }
+
+    @Override
+    public PublisherResponse deleteById(Integer id) {
+
+        Publisher publisherFound = getPublisherOrThow(id);
+
+        publisherFound.setStatus(0);
+
+        Publisher publisherUpdated = publisherRepository.save(publisherFound);
+
+        return publisherMapper.toResponse(publisherUpdated);
+    }
+
+
+
+    private Publisher getPublisherOrThow(Integer id) {
+        return publisherRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + id));
+    }
+}
