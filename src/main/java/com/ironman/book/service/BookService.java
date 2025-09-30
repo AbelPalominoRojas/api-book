@@ -15,4 +15,5 @@ public interface BookService {
 
     BookResponse deleteById(Integer id);
 
+    List<BookOverviewResponse> findAllByPublisherId(Integer publisherId);
 }

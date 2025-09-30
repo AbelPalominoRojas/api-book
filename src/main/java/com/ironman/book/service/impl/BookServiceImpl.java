@@ -67,6 +67,14 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toResponse(updatedBook);
     }
 
+    @Override
+    public List<BookOverviewResponse> findAllByPublisherId(Integer publisherId) {
+        return bookRepository.findAllByPublisherId(publisherId)
+                .stream()
+                .map(bookMapper::toOverviewResponse)
+                .toList();
+    }
+
 
     private Book getBookOrElseThrow(Integer id) {
         return bookRepository.findById(id)
