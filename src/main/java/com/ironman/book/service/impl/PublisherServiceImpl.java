@@ -34,7 +34,7 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public PublisherDetailResponse findById(Integer id) {
-        Publisher publisher = getPublisherOrThow(id);
+        Publisher publisher = getPublisherOrThrow(id);
 
         return publisherMapper.toDetailResponse(publisher);
     }
@@ -51,7 +51,7 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public PublisherResponse update(Integer id, PublisherRequest publisherRequest) {
-        Publisher publisherFound = getPublisherOrThow(id);
+        Publisher publisherFound = getPublisherOrThrow(id);
 
         publisherMapper.updateEntity(publisherFound, publisherRequest);
 
@@ -63,7 +63,7 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public PublisherResponse deleteById(Integer id) {
 
-        Publisher publisherFound = getPublisherOrThow(id);
+        Publisher publisherFound = getPublisherOrThrow(id);
 
         publisherFound.setStatus(0);
 
@@ -74,7 +74,7 @@ public class PublisherServiceImpl implements PublisherService {
 
 
 
-    private Publisher getPublisherOrThow(Integer id) {
+    private Publisher getPublisherOrThrow(Integer id) {
         return publisherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + id));
     }

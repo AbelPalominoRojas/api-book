@@ -5,6 +5,7 @@ import com.ironman.book.dto.PublisherOverviewResponse;
 import com.ironman.book.dto.PublisherRequest;
 import com.ironman.book.dto.PublisherResponse;
 import com.ironman.book.entity.Publisher;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -28,5 +29,6 @@ public interface PublisherMapper {
     @Mapping(target = "publisherName", source = "name")
     Publisher toEntity(PublisherRequest publisherRequest);
 
+    @InheritConfiguration
     void updateEntity(@MappingTarget Publisher publisher, PublisherRequest publisherRequest);
 }
