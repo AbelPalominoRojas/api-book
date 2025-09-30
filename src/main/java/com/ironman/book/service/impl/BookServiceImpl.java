@@ -1,8 +1,6 @@
 package com.ironman.book.service.impl;
 
-import com.ironman.book.dto.BookDetailResponse;
-import com.ironman.book.dto.BookOverviewResponse;
-import com.ironman.book.dto.BookSummaryResponse;
+import com.ironman.book.dto.*;
 import com.ironman.book.entity.Book;
 import com.ironman.book.mapper.BookMapper;
 import com.ironman.book.repository.BookRepository;
@@ -33,9 +31,45 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDetailResponse findById(Integer id) {
-        Book foundBook = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+        Book foundBook = getBookOrElseThrow(id);
 
         return bookMapper.toDetailResponse(foundBook);
+    }
+
+    @Override
+    public BookResponse create(BookRequest bookRequest) {
+        Book book = bookMapper.toEntity(bookRequest);
+        book.setStatus(1);
+
+        Book savedBook = bookRepository.save(book);
+
+        return bookMapper.toResponse(savedBook);
+    }
+
+    @Override
+    public BookResponse update(Integer id, BookRequest bookRequest) {
+        Book foundBook = getBookOrElseThrow(id);
+
+        bookMapper.updateEntity(foundBook, bookRequest);
+
+        Book updatedBook = bookRepository.save(foundBook);
+
+        return bookMapper.toResponse(updatedBook);
+    }
+
+    @Override
+    public BookResponse deleteById(Integer id) {
+        Book foundBook = getBookOrElseThrow(id);
+        foundBook.setStatus(0);
+
+        Book updatedBook = bookRepository.save(foundBook);
+
+        return bookMapper.toResponse(updatedBook);
+    }
+
+
+    private Book getBookOrElseThrow(Integer id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
     }
 }

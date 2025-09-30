@@ -1,13 +1,12 @@
 package com.ironman.book.controller;
 
 import com.ironman.book.dto.BookDetailResponse;
+import com.ironman.book.dto.BookRequest;
+import com.ironman.book.dto.BookResponse;
 import com.ironman.book.dto.BookSummaryResponse;
 import com.ironman.book.service.BookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,4 +31,20 @@ public class BookController {
     BookDetailResponse findById(@PathVariable("id") Integer id) {
         return bookService.findById(id);
     }
+
+    @PostMapping
+    BookResponse save(@RequestBody BookRequest bookRequest) {
+        return bookService.create(bookRequest);
+    }
+
+    @PutMapping("/{id}")
+    BookResponse update(@PathVariable("id") Integer id, @RequestBody BookRequest bookRequest) {
+        return bookService.update(id, bookRequest);
+    }
+
+    @DeleteMapping("/{id}")
+    BookResponse deleteById(@PathVariable("id") Integer id) {
+        return bookService.deleteById(id);
+    }
+
 }
