@@ -59,4 +59,9 @@ public class BookController {
         return bookService.findAllByCommonFilters(title, author, publicationYear, publisherId);
     }
 
+    @GetMapping("/search-query")
+    List<BookOverviewResponse> searchUsingQuery(BookFilterQuery filterQuery) {
+        return bookService.searchUsingQuery(filterQuery);
+    }
+
 }

@@ -23,4 +23,6 @@ public interface BookService {
             Integer publicationYear,
             Integer publisherId
     );
+
+    List<BookOverviewResponse> searchUsingQuery(BookFilterQuery filterQuery);
 }

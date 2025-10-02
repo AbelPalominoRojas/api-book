@@ -93,6 +93,19 @@ public class BookServiceImpl implements BookService {
                 .toList();
     }
 
+    @Override
+    public List<BookOverviewResponse> searchUsingQuery(BookFilterQuery filterQuery) {
+        return bookRepository.searchUsingQuery(
+                        filterQuery.getTitle(),
+                        filterQuery.getAuthors(),
+                        filterQuery.getPublicationYear(),
+                        filterQuery.getPublisherId()
+                )
+                .stream()
+                .map(bookMapper::toOverviewResponse)
+                .toList();
+    }
+
 
     private Book getBookOrElseThrow(Integer id) {
         return bookRepository.findById(id)
