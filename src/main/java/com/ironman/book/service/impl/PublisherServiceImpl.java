@@ -8,6 +8,7 @@ import com.ironman.book.entity.Publisher;
 import com.ironman.book.mapper.PublisherMapper;
 import com.ironman.book.repository.PublisherRepository;
 import com.ironman.book.service.PublisherService;
+import com.ironman.book.util.StatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,6 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public PublisherResponse create(PublisherRequest publisherRequest) {
         Publisher publisher = publisherMapper.toEntity(publisherRequest);
-        publisher.setStatus(1);
 
         Publisher publisherSaved = publisherRepository.save(publisher);
 
@@ -65,7 +65,7 @@ public class PublisherServiceImpl implements PublisherService {
 
         Publisher publisherFound = getPublisherOrThrow(id);
 
-        publisherFound.setStatus(0);
+        publisherFound.setStatus(StatusEnum.DISABLED.getValue());
 
         Publisher publisherUpdated = publisherRepository.save(publisherFound);
 

@@ -5,6 +5,7 @@ import com.ironman.book.dto.PublisherOverviewResponse;
 import com.ironman.book.dto.PublisherRequest;
 import com.ironman.book.dto.PublisherResponse;
 import com.ironman.book.entity.Publisher;
+import com.ironman.book.util.StatusEnum;
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,7 +13,10 @@ import org.mapstruct.MappingTarget;
 
 import static org.mapstruct.MappingConstants.ComponentModel;
 
-@Mapper(componentModel = ComponentModel.SPRING)
+@Mapper(
+        componentModel = ComponentModel.SPRING,
+        imports = {StatusEnum.class}
+)
 public interface PublisherMapper {
 
     @Mapping(target = "code", source = "publisherCode")
@@ -27,8 +31,10 @@ public interface PublisherMapper {
 
     @Mapping(target = "publisherCode", source = "code")
     @Mapping(target = "publisherName", source = "name")
+    @Mapping(target = "status", expression = "java(StatusEnum.ENABLED.getValue())")
     Publisher toEntity(PublisherRequest publisherRequest);
 
-    @InheritConfiguration
+    @Mapping(target = "publisherCode", source = "code")
+    @Mapping(target = "publisherName", source = "name")
     void updateEntity(@MappingTarget Publisher publisher, PublisherRequest publisherRequest);
 }
