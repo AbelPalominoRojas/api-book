@@ -1,6 +1,7 @@
 package com.ironman.book.repository;
 
 import com.ironman.book.entity.Book;
+import com.ironman.book.entity.projection.BookOverviewProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -59,6 +60,27 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
             "AND (:#{#book.publisherId} IS NULL OR b.publisher.id = :#{#book.publisherId})"
     )
     List<Book> searchUsingSpEL(
+            @Param("book") Book book
+    );
+
+    @Query("SELECT " +
+            "b.id AS id, " +
+            "b.isbn AS isbn, " +
+            "b.title AS title, " +
+            "b.authors AS authors, " +
+            "b.edition AS edition, " +
+            "b.publicationYear AS publicationYear, " +
+            "b.publisher.id AS publisherId, " +
+            "p.id AS publisher_id, " +
+            "p.publisherCode AS publisherCode, " +
+            "p.publisherName AS publisherName " +
+            "FROM Book b JOIN b.publisher p " +
+            "WHERE (:#{#book.title} IS NULL OR UPPER(b.title) LIKE UPPER(CONCAT('%',:#{#book.title}, '%'))) " +
+            "AND (:#{#book.authors} IS NULL OR b.authors LIKE %:#{#book.authors}%) " +
+            "AND (:#{#book.publicationYear} IS NULL OR b.publicationYear = :#{#book.publicationYear}) " +
+            "AND (:#{#book.publisherId} IS NULL OR b.publisher.id = :#{#book.publisherId})"
+    )
+    List<BookOverviewProjection> searchUsingProjection(
             @Param("book") Book book
     );
 }

@@ -29,4 +29,6 @@ public interface BookService {
     List<BookOverviewResponse> searchUsingNativeQuery(BookFilterQuery filterQuery);
 
     List<BookOverviewResponse> searchUsingSpEL(BookFilterQuery filterQuery);
+
+    List<BookOverviewResponse> searchUsingProjection(BookFilterQuery filterQuery);
 }

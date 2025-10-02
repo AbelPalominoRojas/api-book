@@ -129,6 +129,16 @@ public class BookServiceImpl implements BookService {
                 .toList();
     }
 
+    @Override
+    public List<BookOverviewResponse> searchUsingProjection(BookFilterQuery filterQuery) {
+        Book book = bookMapper.toEntity(filterQuery);
+
+        return bookRepository.searchUsingProjection(book)
+                .stream()
+                .map(bookMapper::toOverviewResponse)
+                .toList();
+    }
+
 
     private Book getBookOrElseThrow(Integer id) {
         return bookRepository.findById(id)

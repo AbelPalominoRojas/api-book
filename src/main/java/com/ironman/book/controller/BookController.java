@@ -74,4 +74,9 @@ public class BookController {
         return bookService.searchUsingSpEL(filterQuery);
     }
 
+    @GetMapping("/search-projection")
+    List<BookOverviewResponse> searchUsingProjection(BookFilterQuery filterQuery) {
+        return bookService.searchUsingProjection(filterQuery);
+    }
+
 }

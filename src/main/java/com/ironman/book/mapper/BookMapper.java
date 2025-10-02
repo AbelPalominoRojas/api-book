@@ -2,6 +2,7 @@ package com.ironman.book.mapper;
 
 import com.ironman.book.dto.*;
 import com.ironman.book.entity.Book;
+import com.ironman.book.entity.projection.BookOverviewProjection;
 import com.ironman.book.util.StatusEnum;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -19,6 +20,11 @@ import static org.mapstruct.MappingConstants.ComponentModel;
 public interface BookMapper {
 
     BookDetailResponse toDetailResponse(Book book);
+
+    @Mapping(target = "publisher.id", source = "publisherId")
+    @Mapping(target = "publisher.code", source = "publisherCode")
+    @Mapping(target = "publisher.name", source = "publisherName")
+    BookOverviewResponse toOverviewResponse(BookOverviewProjection bookProjection);
 
     BookOverviewResponse toOverviewResponse(Book book);
 
