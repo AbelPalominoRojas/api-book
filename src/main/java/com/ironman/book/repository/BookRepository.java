@@ -51,4 +51,14 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
             @Param("publisherId") Integer publisherId
     );
 
+
+    @Query("SELECT b FROM Book b " +
+            "WHERE (:#{#book.title} IS NULL OR UPPER(b.title) LIKE UPPER(CONCAT('%',:#{#book.title}, '%'))) " +
+            "AND (:#{#book.authors} IS NULL OR b.authors LIKE %:#{#book.authors}%) " +
+            "AND (:#{#book.publicationYear} IS NULL OR b.publicationYear = :#{#book.publicationYear}) " +
+            "AND (:#{#book.publisherId} IS NULL OR b.publisher.id = :#{#book.publisherId})"
+    )
+    List<Book> searchUsingSpEL(
+            @Param("book") Book book
+    );
 }

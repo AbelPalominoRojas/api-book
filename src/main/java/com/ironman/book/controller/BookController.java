@@ -69,4 +69,9 @@ public class BookController {
         return bookService.searchUsingNativeQuery(filterQuery);
     }
 
+    @GetMapping("/search-spel")
+    List<BookOverviewResponse> searchUsingSpEL(BookFilterQuery filterQuery) {
+        return bookService.searchUsingSpEL(filterQuery);
+    }
+
 }
