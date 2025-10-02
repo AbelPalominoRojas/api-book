@@ -41,6 +41,10 @@ public class Book implements Serializable {
     @Column(name = "publisher_id", nullable = false)
     private Integer publisherId;
 
+    @ManyToOne
+    @JoinColumn(name = "publisher_id", insertable = false, updatable = false)
+    private Publisher publisher;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;

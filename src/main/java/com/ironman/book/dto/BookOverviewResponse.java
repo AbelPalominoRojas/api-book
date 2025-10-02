@@ -18,4 +18,5 @@ public class BookOverviewResponse implements Serializable {
     private String edition;
     private Integer publicationYear;
     private Integer publisherId;
+    private PublisherOverviewResponse publisher;
 }
