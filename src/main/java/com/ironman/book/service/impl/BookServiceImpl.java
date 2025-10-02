@@ -75,6 +75,24 @@ public class BookServiceImpl implements BookService {
                 .toList();
     }
 
+    @Override
+    public List<BookOverviewResponse> findAllByCommonFilters(
+            String title,
+            String author,
+            Integer publicationYear,
+            Integer publisherId
+    ) {
+        return bookRepository.findAllByTitleLikeAndAuthorsLikeAndPublicationYearAndPublisherId(
+                        "%" + title + "%",
+                        "%" + author + "%",
+                        publicationYear,
+                        publisherId
+                )
+                .stream()
+                .map(bookMapper::toOverviewResponse)
+                .toList();
+    }
+
 
     private Book getBookOrElseThrow(Integer id) {
         return bookRepository.findById(id)

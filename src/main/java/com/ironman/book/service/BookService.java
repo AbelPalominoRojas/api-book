@@ -16,4 +16,11 @@ public interface BookService {
     BookResponse deleteById(Integer id);
 
     List<BookOverviewResponse> findAllByPublisherId(Integer publisherId);
+
+    List<BookOverviewResponse> findAllByCommonFilters(
+            String title,
+            String author,
+            Integer publicationYear,
+            Integer publisherId
+    );
 }

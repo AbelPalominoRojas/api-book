@@ -49,4 +49,14 @@ public class BookController {
         return bookService.findAllByPublisherId(publisherId);
     }
 
+    @GetMapping("/search")
+    List<BookOverviewResponse> findAllByCommonFilters(
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "author", required = false) String author,
+            @RequestParam(value = "publicationYear", required = false) Integer publicationYear,
+            @RequestParam(value = "publisherId", required = false) Integer publisherId
+    ) {
+        return bookService.findAllByCommonFilters(title, author, publicationYear, publisherId);
+    }
+
 }
