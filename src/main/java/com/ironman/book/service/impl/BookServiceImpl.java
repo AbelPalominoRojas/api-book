@@ -106,6 +106,19 @@ public class BookServiceImpl implements BookService {
                 .toList();
     }
 
+    @Override
+    public List<BookOverviewResponse> searchUsingNativeQuery(BookFilterQuery filterQuery) {
+        return bookRepository.searchUsingNativeQuery(
+                        filterQuery.getTitle(),
+                        filterQuery.getAuthors(),
+                        filterQuery.getPublicationYear(),
+                        filterQuery.getPublisherId()
+                )
+                .stream()
+                .map(bookMapper::toOverviewResponse)
+                .toList();
+    }
+
 
     private Book getBookOrElseThrow(Integer id) {
         return bookRepository.findById(id)

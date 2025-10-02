@@ -64,4 +64,9 @@ public class BookController {
         return bookService.searchUsingQuery(filterQuery);
     }
 
+    @GetMapping("/search-native")
+    List<BookOverviewResponse> searchUsingNativeQuery(BookFilterQuery filterQuery) {
+        return bookService.searchUsingNativeQuery(filterQuery);
+    }
+
 }
