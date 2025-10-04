@@ -1,0 +1,33 @@
+package com.ironman.book.controller.advice;
+
+import static com.ironman.book.exception.ExceptionResponse.ExceptionDetailResponse;
+
+import com.ironman.book.exception.ExceptionResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+
+        var details = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> ExceptionDetailResponse.builder()
+                        .component(fieldError.getField())
+                        .message(fieldError.getDefaultMessage())
+                        .build())
+                .toList();
+
+        var response = ExceptionResponse.builder()
+                .message("Validation failed")
+                .details(details)
+                .build();
+
+        return ResponseEntity.badRequest().body(response);
+    }
+}
