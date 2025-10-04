@@ -2,7 +2,9 @@ package com.ironman.book.controller.advice;
 
 import static com.ironman.book.exception.ExceptionResponse.ExceptionDetailResponse;
 
+import com.ironman.book.exception.AppBaseException;
 import com.ironman.book.exception.ExceptionResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,4 +32,17 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler(AppBaseException.class)
+    public ResponseEntity<ExceptionResponse> handleAppBaseException(AppBaseException e) {
+
+        var response = ExceptionResponse.builder()
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
 }

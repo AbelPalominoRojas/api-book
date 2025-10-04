@@ -5,6 +5,7 @@ import com.ironman.book.dto.PublisherOverviewResponse;
 import com.ironman.book.dto.PublisherRequest;
 import com.ironman.book.dto.PublisherResponse;
 import com.ironman.book.entity.Publisher;
+import com.ironman.book.exception.DataNotFoundException;
 import com.ironman.book.mapper.PublisherMapper;
 import com.ironman.book.repository.PublisherRepository;
 import com.ironman.book.service.PublisherService;
@@ -76,6 +77,6 @@ public class PublisherServiceImpl implements PublisherService {
 
     private Publisher getPublisherOrThrow(Integer id) {
         return publisherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + id));
+                .orElseThrow(() -> new DataNotFoundException("Publisher not found with id: " + id));
     }
 }
