@@ -7,6 +7,7 @@ import com.ironman.book.dto.PublisherResponse;
 import com.ironman.book.entity.Publisher;
 import com.ironman.book.exception.DataNotFoundException;
 import com.ironman.book.exception.DataUniqueException;
+import com.ironman.book.exception.ExceptionManager;
 import com.ironman.book.mapper.PublisherMapper;
 import com.ironman.book.repository.PublisherRepository;
 import com.ironman.book.service.PublisherService;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 // Lombok annotations
 @RequiredArgsConstructor
@@ -30,55 +30,75 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public List<PublisherOverviewResponse> findAll() {
-        return publisherRepository.findAll()
-                .stream()
-                .map(publisherMapper::toOverviewResponse)
-                .toList();
+        try {
+            return publisherRepository.findAll()
+                    .stream()
+                    .map(publisherMapper::toOverviewResponse)
+                    .toList();
+        } catch (Exception e) {
+            throw ExceptionManager.handleException(e);
+        }
     }
 
     @Override
     public PublisherDetailResponse findById(Integer id) {
-        Publisher publisher = getPublisherOrThrow(id);
+        try {
+            Publisher publisher = getPublisherOrThrow(id);
 
-        return publisherMapper.toDetailResponse(publisher);
+            return publisherMapper.toDetailResponse(publisher);
+        } catch (Exception e) {
+            throw ExceptionManager.handleException(e);
+        }
     }
 
     @Override
     public PublisherResponse create(PublisherRequest publisherRequest) {
-        publisherRepository
-                .findByPublisherCode(publisherRequest.getCode())
-                .ifPresent(p -> {
-                    throw new DataUniqueException("Publisher code already exists: " + publisherRequest.getCode());
-                });
+        try {
 
-        Publisher publisher = publisherMapper.toEntity(publisherRequest);
+            publisherRepository
+                    .findByPublisherCode(publisherRequest.getCode())
+                    .ifPresent(p -> {
+                        throw new DataUniqueException("Publisher code already exists: " + publisherRequest.getCode());
+                    });
 
-        Publisher publisherSaved = publisherRepository.save(publisher);
+            Publisher publisher = publisherMapper.toEntity(publisherRequest);
 
-        return publisherMapper.toResponse(publisherSaved);
+            Publisher publisherSaved = publisherRepository.save(publisher);
+
+            return publisherMapper.toResponse(publisherSaved);
+        } catch (Exception e) {
+            throw ExceptionManager.handleException(e);
+        }
     }
 
     @Override
     public PublisherResponse update(Integer id, PublisherRequest publisherRequest) {
-        Publisher publisherFound = getPublisherOrThrow(id);
+        try {
+            Publisher publisherFound = getPublisherOrThrow(id);
 
-        publisherMapper.updateEntity(publisherFound, publisherRequest);
+            publisherMapper.updateEntity(publisherFound, publisherRequest);
 
-        Publisher publisherUpdated = publisherRepository.save(publisherFound);
+            Publisher publisherUpdated = publisherRepository.save(publisherFound);
 
-        return publisherMapper.toResponse(publisherUpdated);
+            return publisherMapper.toResponse(publisherUpdated);
+        } catch (Exception e) {
+            throw ExceptionManager.handleException(e);
+        }
     }
 
     @Override
     public PublisherResponse deleteById(Integer id) {
+        try {
+            Publisher publisherFound = getPublisherOrThrow(id);
 
-        Publisher publisherFound = getPublisherOrThrow(id);
+            publisherFound.setStatus(StatusEnum.DISABLED.getValue());
 
-        publisherFound.setStatus(StatusEnum.DISABLED.getValue());
+            Publisher publisherUpdated = publisherRepository.save(publisherFound);
 
-        Publisher publisherUpdated = publisherRepository.save(publisherFound);
-
-        return publisherMapper.toResponse(publisherUpdated);
+            return publisherMapper.toResponse(publisherUpdated);
+        } catch (Exception e) {
+            throw ExceptionManager.handleException(e);
+        }
     }
 
 
