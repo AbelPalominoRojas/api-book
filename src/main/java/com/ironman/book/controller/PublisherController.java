@@ -5,6 +5,7 @@ import com.ironman.book.dto.PublisherOverviewResponse;
 import com.ironman.book.dto.PublisherRequest;
 import com.ironman.book.dto.PublisherResponse;
 import com.ironman.book.service.PublisherService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,12 +33,12 @@ public class PublisherController {
     }
 
     @PostMapping
-    PublisherResponse create(@RequestBody PublisherRequest publisherRequest) {
+    PublisherResponse create(@Valid @RequestBody PublisherRequest publisherRequest) {
         return publisherService.create(publisherRequest);
     }
 
     @PutMapping("/{id}")
-    PublisherResponse update(@PathVariable("id") Integer id, @RequestBody PublisherRequest publisherRequest) {
+    PublisherResponse update(@PathVariable("id") Integer id, @Valid @RequestBody PublisherRequest publisherRequest) {
         return publisherService.update(id, publisherRequest);
     }
 
