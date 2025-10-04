@@ -6,6 +6,7 @@ import com.ironman.book.dto.PublisherRequest;
 import com.ironman.book.dto.PublisherResponse;
 import com.ironman.book.entity.Publisher;
 import com.ironman.book.exception.DataNotFoundException;
+import com.ironman.book.exception.DataUniqueException;
 import com.ironman.book.mapper.PublisherMapper;
 import com.ironman.book.repository.PublisherRepository;
 import com.ironman.book.service.PublisherService;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 // Lombok annotations
 @RequiredArgsConstructor
@@ -43,6 +45,12 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public PublisherResponse create(PublisherRequest publisherRequest) {
+        publisherRepository
+                .findByPublisherCode(publisherRequest.getCode())
+                .ifPresent(p -> {
+                    throw new DataUniqueException("Publisher code already exists: " + publisherRequest.getCode());
+                });
+
         Publisher publisher = publisherMapper.toEntity(publisherRequest);
 
         Publisher publisherSaved = publisherRepository.save(publisher);
@@ -72,7 +80,6 @@ public class PublisherServiceImpl implements PublisherService {
 
         return publisherMapper.toResponse(publisherUpdated);
     }
-
 
 
     private Publisher getPublisherOrThrow(Integer id) {
