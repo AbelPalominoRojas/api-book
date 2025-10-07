@@ -1,6 +1,8 @@
 package com.ironman.book.dto;
 
+import com.ironman.book.common.page.PageableRequest;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
@@ -9,10 +11,8 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class BookPageFilterQuery implements Serializable {
-    private Integer pageNumber;
-    private Integer pageSize;
+@SuperBuilder
+public class BookPageFilterQuery extends PageableRequest implements Serializable {
     private String title;
     private String authors;
     private Integer publicationYear;

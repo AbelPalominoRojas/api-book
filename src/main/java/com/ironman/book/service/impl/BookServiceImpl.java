@@ -1,8 +1,7 @@
 package com.ironman.book.service.impl;
 
-import static org.springframework.data.domain.Sort.Direction;
-
 import com.ironman.book.common.page.PageResponse;
+import com.ironman.book.common.page.PagingAndSortingBuilder;
 import com.ironman.book.dto.*;
 import com.ironman.book.entity.Book;
 import com.ironman.book.entity.emuns.BookSortField;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.List;
 
 // Spring Stereotype
 @Service
-public class BookServiceImpl implements BookService {
+public class BookServiceImpl extends PagingAndSortingBuilder implements BookService {
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
@@ -149,28 +147,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public PageResponse<BookOverviewResponse> findAllPaged(int page, int size) {
-        Pageable pageable = PageRequest.of(page-1, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<BookOverviewProjection> bookPage = bookRepository.paginationUsingProjection(pageable);
 
-        var responseList = bookPage.getContent()
-                .stream()
-                .map(bookMapper::toOverviewResponse)
-                .toList();
-
-        return PageResponse.<BookOverviewResponse>builder()
-                .content(responseList)
-                .pageNumber(bookPage.getNumber() + 1)
-                .pageSize(bookPage.getSize())
-                .numberOfElements(bookPage.getNumberOfElements())
-                .totalElements(bookPage.getTotalElements())
-                .totalPages(bookPage.getTotalPages())
-                .build();
+        return buildPageResponse(bookPage, bookMapper::toOverviewResponse);
     }
 
     @Override
     public PageResponse<BookOverviewResponse> pageSearchUsingProjection(BookPageFilterQuery filterQuery) {
-        Pageable pageable = PageRequest.of(filterQuery.getPageNumber() - 1, filterQuery.getPageSize());
+        Pageable pageable = buildPageable(filterQuery);
 
         Book filterBook = bookMapper.toEntity(filterQuery);
 
@@ -179,48 +165,23 @@ public class BookServiceImpl implements BookService {
                 pageable
         );
 
-        var responseList = bookPage.getContent()
-                .stream()
-                .map(bookMapper::toOverviewResponse)
-                .toList();
-
-        return PageResponse.<BookOverviewResponse>builder()
-                .content(responseList)
-                .pageNumber(bookPage.getNumber() + 1)
-                .pageSize(bookPage.getSize())
-                .numberOfElements(bookPage.getNumberOfElements())
-                .totalElements(bookPage.getTotalElements())
-                .totalPages(bookPage.getTotalPages())
-                .build();
+        return buildPageResponse(bookPage, bookMapper::toOverviewResponse);
     }
 
     @Override
     public PageResponse<BookOverviewResponse> pageAndSortUsingProjection(BookPageSortFilterQuery filterQuery) {
 
         String fieldName = BookSortField.getFieldName(filterQuery.getSortField());
-        Direction direction = Direction.fromOptionalString(filterQuery.getSortOrder())
-                .orElse(Direction.DESC);
-        Sort sort = Sort.by(direction, fieldName);
+        Pageable pageable = buildPageable(filterQuery, fieldName);
 
-        Pageable pageable = PageRequest
-                .of(filterQuery.getPageNumber() - 1, filterQuery.getPageSize(), sort);
+        Book filterBook = bookMapper.toEntity(filterQuery);
 
-        Page<BookOverviewProjection> bookPage = bookRepository.paginationUsingProjection(pageable);
+        Page<BookOverviewProjection> bookPage = bookRepository.pageSearchUsingProjection(
+                filterBook,
+                pageable
+        );
 
-        var responseList = bookPage.getContent()
-                .stream()
-                .map(bookMapper::toOverviewResponse)
-                .toList();
-
-
-        return PageResponse.<BookOverviewResponse>builder()
-                .content(responseList)
-                .pageNumber(bookPage.getNumber() + 1)
-                .pageSize(bookPage.getSize())
-                .numberOfElements(bookPage.getNumberOfElements())
-                .totalElements(bookPage.getTotalElements())
-                .totalPages(bookPage.getTotalPages())
-                .build();
+        return buildPageResponse(bookPage, bookMapper::toOverviewResponse);
     }
 
 

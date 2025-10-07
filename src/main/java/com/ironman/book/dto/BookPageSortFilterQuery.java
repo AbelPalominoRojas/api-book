@@ -1,18 +1,18 @@
 package com.ironman.book.dto;
 
+import com.ironman.book.common.page.PageSortRequest;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.io.Serializable;
 
 // Lombok annotations to reduce boilerplate code
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class BookPageSortFilterQuery implements java.io.Serializable {
-    private Integer pageNumber;
-    private Integer pageSize;
-    private String sortField;
-    private String sortOrder;
+@SuperBuilder
+public class BookPageSortFilterQuery extends PageSortRequest implements Serializable {
     private String title;
     private String authors;
     private Integer publicationYear;

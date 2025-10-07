@@ -36,6 +36,8 @@ public interface BookMapper {
 
     Book toEntity(BookPageFilterQuery filterQuery);
 
+    Book toEntity(BookPageSortFilterQuery filterQuery);
+
     @Mapping(target = "status", expression = "java(StatusEnum.ENABLED.getValue())")
     Book toEntity(BookRequest request);
 
