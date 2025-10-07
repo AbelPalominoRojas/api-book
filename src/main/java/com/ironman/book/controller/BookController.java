@@ -3,6 +3,8 @@ package com.ironman.book.controller;
 import com.ironman.book.dto.*;
 import com.ironman.book.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -77,6 +79,15 @@ public class BookController {
     @GetMapping("/search-projection")
     List<BookOverviewResponse> searchUsingProjection(BookFilterQuery filterQuery) {
         return bookService.searchUsingProjection(filterQuery);
+    }
+
+    @GetMapping("/paged")
+    ResponseEntity<Page<BookOverviewResponse>> findAllPaged(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Page<BookOverviewResponse> pagedResult = bookService.findAllPaged(page, size);
+        return ResponseEntity.ok(pagedResult);
     }
 
 }

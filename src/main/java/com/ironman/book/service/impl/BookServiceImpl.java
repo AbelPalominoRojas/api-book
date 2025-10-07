@@ -7,6 +7,10 @@ import com.ironman.book.repository.BookRepository;
 import com.ironman.book.service.BookService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -137,6 +141,23 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .map(bookMapper::toOverviewResponse)
                 .toList();
+    }
+
+    @Override
+    public Page<BookOverviewResponse> findAllPaged(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Book> bookPage = bookRepository.findAll(pageable);
+
+        var responseList = bookPage.getContent()
+                .stream()
+                .map(bookMapper::toOverviewResponse);
+
+        return new PageImpl<>(
+                responseList.toList(),
+                pageable,
+                bookPage.getTotalElements()
+        );
     }
 
 
