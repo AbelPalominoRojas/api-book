@@ -1,5 +1,6 @@
 package com.ironman.book.controller;
 
+import com.ironman.book.common.page.PageResponse;
 import com.ironman.book.dto.*;
 import com.ironman.book.exception.ExceptionResponse;
 import com.ironman.book.service.BookService;
@@ -8,8 +9,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -517,13 +518,7 @@ public class BookController {
 
     @ApiResponse(
             responseCode = HttpStatusCode.OK,
-            description = "Successfully retrieved paged list of books",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(
-                            implementation = Page.class
-                    )
-            )
+            description = "Successfully retrieved paged list of books"
     )
     @ApiResponse(
             responseCode = HttpStatusCode.BAD_REQUEST,
@@ -546,11 +541,13 @@ public class BookController {
             )
     )
     @GetMapping("/paged")
-    ResponseEntity<Page<BookOverviewResponse>> findAllPaged(
-            @RequestParam(value = "page", defaultValue = "0") int page,
+    ResponseEntity<PageResponse<BookOverviewResponse>> findAllPaged(
+            @RequestParam(value = "page", defaultValue = "1")
+            @Min(value = 1, message = "Page number must be at least 1")
+            int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        Page<BookOverviewResponse> pagedResult = bookService.findAllPaged(page, size);
+        PageResponse<BookOverviewResponse> pagedResult = bookService.findAllPaged(page, size);
         return ResponseEntity.ok(pagedResult);
     }
 

@@ -1,7 +1,7 @@
 package com.ironman.book.service;
 
+import com.ironman.book.common.page.PageResponse;
 import com.ironman.book.dto.*;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -33,5 +33,5 @@ public interface BookService {
 
     List<BookOverviewResponse> searchUsingProjection(BookFilterQuery filterQuery);
 
-    Page<BookOverviewResponse> findAllPaged(int page, int size);
+    PageResponse<BookOverviewResponse> findAllPaged(int page, int size);
 }

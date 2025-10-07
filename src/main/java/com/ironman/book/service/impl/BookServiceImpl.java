@@ -1,14 +1,13 @@
 package com.ironman.book.service.impl;
 
+import com.ironman.book.common.page.PageResponse;
 import com.ironman.book.dto.*;
 import com.ironman.book.entity.Book;
 import com.ironman.book.mapper.BookMapper;
 import com.ironman.book.repository.BookRepository;
 import com.ironman.book.service.BookService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -144,20 +143,24 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookOverviewResponse> findAllPaged(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public PageResponse<BookOverviewResponse> findAllPaged(int page, int size) {
+        Pageable pageable = PageRequest.of(page-1, size);
 
         Page<Book> bookPage = bookRepository.findAll(pageable);
 
         var responseList = bookPage.getContent()
                 .stream()
-                .map(bookMapper::toOverviewResponse);
+                .map(bookMapper::toOverviewResponse)
+                .toList();
 
-        return new PageImpl<>(
-                responseList.toList(),
-                pageable,
-                bookPage.getTotalElements()
-        );
+        return PageResponse.<BookOverviewResponse>builder()
+                .content(responseList)
+                .pageNumber(bookPage.getNumber() + 1)
+                .pageSize(bookPage.getSize())
+                .numberOfElements(bookPage.getNumberOfElements())
+                .totalElements(bookPage.getTotalElements())
+                .totalPages(bookPage.getTotalPages())
+                .build();
     }
 
 
