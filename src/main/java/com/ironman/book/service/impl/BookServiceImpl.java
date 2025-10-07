@@ -1,8 +1,11 @@
 package com.ironman.book.service.impl;
 
+import static org.springframework.data.domain.Sort.Direction;
+
 import com.ironman.book.common.page.PageResponse;
 import com.ironman.book.dto.*;
 import com.ironman.book.entity.Book;
+import com.ironman.book.entity.emuns.BookSortField;
 import com.ironman.book.entity.projection.BookOverviewProjection;
 import com.ironman.book.mapper.BookMapper;
 import com.ironman.book.repository.BookRepository;
@@ -11,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -179,6 +183,35 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .map(bookMapper::toOverviewResponse)
                 .toList();
+
+        return PageResponse.<BookOverviewResponse>builder()
+                .content(responseList)
+                .pageNumber(bookPage.getNumber() + 1)
+                .pageSize(bookPage.getSize())
+                .numberOfElements(bookPage.getNumberOfElements())
+                .totalElements(bookPage.getTotalElements())
+                .totalPages(bookPage.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public PageResponse<BookOverviewResponse> pageAndSortUsingProjection(BookPageSortFilterQuery filterQuery) {
+
+        String fieldName = BookSortField.getFieldName(filterQuery.getSortField());
+        Direction direction = Direction.fromOptionalString(filterQuery.getSortOrder())
+                .orElse(Direction.DESC);
+        Sort sort = Sort.by(direction, fieldName);
+
+        Pageable pageable = PageRequest
+                .of(filterQuery.getPageNumber() - 1, filterQuery.getPageSize(), sort);
+
+        Page<BookOverviewProjection> bookPage = bookRepository.paginationUsingProjection(pageable);
+
+        var responseList = bookPage.getContent()
+                .stream()
+                .map(bookMapper::toOverviewResponse)
+                .toList();
+
 
         return PageResponse.<BookOverviewResponse>builder()
                 .content(responseList)

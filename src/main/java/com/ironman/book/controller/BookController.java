@@ -582,4 +582,36 @@ public class BookController {
                 .status(HttpStatus.OK)
                 .body(bookService.pageSearchUsingProjection(filterQuery));
     }
+
+    // PageResponse<BookOverviewResponse> pageAndSortUsingProjection(BookPageSortFilterQuery filterQuery)
+    @ApiResponse(
+            responseCode = HttpStatusCode.OK,
+            description = "Successfully retrieved paged and sorted list of books matching the provided filters"
+    )
+    @ApiResponse(
+            responseCode = HttpStatusCode.BAD_REQUEST,
+            description = "Invalid pagination, sorting, or filter parameters, please check your request.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(
+                            implementation = ExceptionResponse.class
+                    )
+            )
+    )
+    @ApiResponse(
+            responseCode = HttpStatusCode.INTERNAL_SERVER_ERROR,
+            description = "An unexpected error occurred, please try again later.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(
+                            implementation = ExceptionResponse.class
+                    )
+            )
+    )
+    @GetMapping("/paged-sorted-search")
+    ResponseEntity<PageResponse<BookOverviewResponse>> pageAndSortUsingProjection(BookPageSortFilterQuery filterQuery) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.pageAndSortUsingProjection(filterQuery));
+    }
 }
