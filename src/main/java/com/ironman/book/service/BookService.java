@@ -34,4 +34,6 @@ public interface BookService {
     List<BookOverviewResponse> searchUsingProjection(BookFilterQuery filterQuery);
 
     PageResponse<BookOverviewResponse> findAllPaged(int page, int size);
+
+    PageResponse<BookOverviewResponse> pageSearchUsingProjection(BookPageFilterQuery filterQuery);
 }

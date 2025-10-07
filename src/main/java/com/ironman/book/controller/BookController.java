@@ -542,13 +542,44 @@ public class BookController {
     )
     @GetMapping("/paged")
     ResponseEntity<PageResponse<BookOverviewResponse>> findAllPaged(
-            @RequestParam(value = "page", defaultValue = "1")
+            @RequestParam(value = "pageNumber", defaultValue = "1")
             @Min(value = 1, message = "Page number must be at least 1")
-            int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
     ) {
-        PageResponse<BookOverviewResponse> pagedResult = bookService.findAllPaged(page, size);
+        PageResponse<BookOverviewResponse> pagedResult = bookService.findAllPaged(pageNumber, pageSize);
         return ResponseEntity.ok(pagedResult);
     }
 
+
+    @ApiResponse(
+            responseCode = HttpStatusCode.OK,
+            description = "Successfully retrieved paged list of books matching the provided filters"
+    )
+    @ApiResponse(
+            responseCode = HttpStatusCode.BAD_REQUEST,
+            description = "Invalid pagination or filter parameters, please check your request.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(
+                            implementation = ExceptionResponse.class
+                    )
+            )
+    )
+    @ApiResponse(
+            responseCode = HttpStatusCode.INTERNAL_SERVER_ERROR,
+            description = "An unexpected error occurred, please try again later.",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(
+                            implementation = ExceptionResponse.class
+                    )
+            )
+    )
+    @GetMapping("/paged-search")
+    ResponseEntity<PageResponse<BookOverviewResponse>> pageSearchUsingProjection(BookPageFilterQuery filterQuery) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(bookService.pageSearchUsingProjection(filterQuery));
+    }
 }

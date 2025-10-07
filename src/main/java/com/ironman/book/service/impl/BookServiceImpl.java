@@ -164,6 +164,32 @@ public class BookServiceImpl implements BookService {
                 .build();
     }
 
+    @Override
+    public PageResponse<BookOverviewResponse> pageSearchUsingProjection(BookPageFilterQuery filterQuery) {
+        Pageable pageable = PageRequest.of(filterQuery.getPageNumber() - 1, filterQuery.getPageSize());
+
+        Book filterBook = bookMapper.toEntity(filterQuery);
+
+        Page<BookOverviewProjection> bookPage = bookRepository.pageSearchUsingProjection(
+                filterBook,
+                pageable
+        );
+
+        var responseList = bookPage.getContent()
+                .stream()
+                .map(bookMapper::toOverviewResponse)
+                .toList();
+
+        return PageResponse.<BookOverviewResponse>builder()
+                .content(responseList)
+                .pageNumber(bookPage.getNumber() + 1)
+                .pageSize(bookPage.getSize())
+                .numberOfElements(bookPage.getNumberOfElements())
+                .totalElements(bookPage.getTotalElements())
+                .totalPages(bookPage.getTotalPages())
+                .build();
+    }
+
 
     private Book getBookOrElseThrow(Integer id) {
         return bookRepository.findById(id)

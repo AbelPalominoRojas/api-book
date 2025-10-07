@@ -101,4 +101,27 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
             "FROM Book b JOIN b.publisher p "
     )
     Page<BookOverviewProjection> paginationUsingProjection(Pageable pageable);
+
+
+    @Query("SELECT " +
+            "b.id AS id, " +
+            "b.isbn AS isbn, " +
+            "b.title AS title, " +
+            "b.authors AS authors, " +
+            "b.edition AS edition, " +
+            "b.publicationYear AS publicationYear, " +
+            "b.publisher.id AS publisherId, " +
+            "p.id AS publisher_id, " +
+            "p.publisherCode AS publisherCode, " +
+            "p.publisherName AS publisherName " +
+            "FROM Book b JOIN b.publisher p " +
+            "WHERE (:#{#book.title} IS NULL OR UPPER(b.title) LIKE UPPER(CONCAT('%',:#{#book.title}, '%'))) " +
+            "AND (:#{#book.authors} IS NULL OR b.authors LIKE %:#{#book.authors}%) " +
+            "AND (:#{#book.publicationYear} IS NULL OR b.publicationYear = :#{#book.publicationYear}) " +
+            "AND (:#{#book.publisherId} IS NULL OR b.publisher.id = :#{#book.publisherId})"
+    )
+    Page<BookOverviewProjection> pageSearchUsingProjection(
+            @Param("book") Book book,
+            Pageable pageable
+    );
 }
