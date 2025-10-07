@@ -3,6 +3,7 @@ package com.ironman.book.service.impl;
 import com.ironman.book.common.page.PageResponse;
 import com.ironman.book.dto.*;
 import com.ironman.book.entity.Book;
+import com.ironman.book.entity.projection.BookOverviewProjection;
 import com.ironman.book.mapper.BookMapper;
 import com.ironman.book.repository.BookRepository;
 import com.ironman.book.service.BookService;
@@ -146,7 +147,7 @@ public class BookServiceImpl implements BookService {
     public PageResponse<BookOverviewResponse> findAllPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page-1, size);
 
-        Page<Book> bookPage = bookRepository.findAll(pageable);
+        Page<BookOverviewProjection> bookPage = bookRepository.paginationUsingProjection(pageable);
 
         var responseList = bookPage.getContent()
                 .stream()

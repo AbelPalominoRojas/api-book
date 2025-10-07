@@ -2,6 +2,8 @@ package com.ironman.book.repository;
 
 import com.ironman.book.entity.Book;
 import com.ironman.book.entity.projection.BookOverviewProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -83,4 +85,20 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<BookOverviewProjection> searchUsingProjection(
             @Param("book") Book book
     );
+
+
+    @Query("SELECT " +
+            "b.id AS id, " +
+            "b.isbn AS isbn, " +
+            "b.title AS title, " +
+            "b.authors AS authors, " +
+            "b.edition AS edition, " +
+            "b.publicationYear AS publicationYear, " +
+            "b.publisher.id AS publisherId, " +
+            "p.id AS publisher_id, " +
+            "p.publisherCode AS publisherCode, " +
+            "p.publisherName AS publisherName " +
+            "FROM Book b JOIN b.publisher p "
+    )
+    Page<BookOverviewProjection> paginationUsingProjection(Pageable pageable);
 }
