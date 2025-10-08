@@ -1,4 +1,4 @@
-package com.ironman.book.dto;
+package com.ironman.book.dto.publisher;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;

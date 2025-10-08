@@ -1,4 +1,4 @@
-package com.ironman.book.dto;
+package com.ironman.book.dto.book;
 
 import com.ironman.book.common.page.PageableRequest;
 import lombok.*;

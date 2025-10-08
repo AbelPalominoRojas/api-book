@@ -1,12 +1,11 @@
 package com.ironman.book.mapper;
 
-import com.ironman.book.dto.PublisherDetailResponse;
-import com.ironman.book.dto.PublisherOverviewResponse;
-import com.ironman.book.dto.PublisherRequest;
-import com.ironman.book.dto.PublisherResponse;
+import com.ironman.book.dto.publisher.PublisherDetailResponse;
+import com.ironman.book.dto.publisher.PublisherOverviewResponse;
+import com.ironman.book.dto.publisher.PublisherRequest;
+import com.ironman.book.dto.publisher.PublisherResponse;
 import com.ironman.book.entity.Publisher;
 import com.ironman.book.util.StatusEnum;
-import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

@@ -1,7 +1,7 @@
 package com.ironman.book.controller;
 
 import com.ironman.book.common.page.PageResponse;
-import com.ironman.book.dto.*;
+import com.ironman.book.dto.book.*;
 import com.ironman.book.exception.ExceptionResponse;
 import com.ironman.book.service.BookService;
 import com.ironman.book.util.HttpStatusCode;

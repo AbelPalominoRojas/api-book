@@ -1,4 +1,4 @@
-package com.ironman.book.dto;
+package com.ironman.book.dto.book;
 
 import lombok.*;
 
@@ -10,9 +10,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BookSummaryResponse implements Serializable {
-    private Integer id;
-    private String isbn;
+public class BookFilterQuery implements Serializable {
     private String title;
+    private String authors;
+    private Integer publicationYear;
     private Integer publisherId;
 }

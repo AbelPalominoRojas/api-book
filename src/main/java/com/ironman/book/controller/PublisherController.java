@@ -1,9 +1,9 @@
 package com.ironman.book.controller;
 
-import com.ironman.book.dto.PublisherDetailResponse;
-import com.ironman.book.dto.PublisherOverviewResponse;
-import com.ironman.book.dto.PublisherRequest;
-import com.ironman.book.dto.PublisherResponse;
+import com.ironman.book.dto.publisher.PublisherDetailResponse;
+import com.ironman.book.dto.publisher.PublisherOverviewResponse;
+import com.ironman.book.dto.publisher.PublisherRequest;
+import com.ironman.book.dto.publisher.PublisherResponse;
 import com.ironman.book.exception.ExceptionResponse;
 import com.ironman.book.service.PublisherService;
 import com.ironman.book.util.HttpStatusCode;

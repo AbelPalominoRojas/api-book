@@ -1,6 +1,6 @@
 package com.ironman.book.mapper;
 
-import com.ironman.book.dto.*;
+import com.ironman.book.dto.book.*;
 import com.ironman.book.entity.Book;
 import com.ironman.book.entity.projection.BookOverviewProjection;
 import com.ironman.book.util.StatusEnum;

@@ -1,4 +1,4 @@
-package com.ironman.book.dto;
+package com.ironman.book.dto.publisher;
 
 import lombok.*;
 

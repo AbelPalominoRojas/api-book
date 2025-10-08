@@ -1,5 +1,6 @@
-package com.ironman.book.dto;
+package com.ironman.book.dto.book;
 
+import com.ironman.book.dto.publisher.PublisherOverviewResponse;
 import lombok.*;
 
 import java.io.Serializable;

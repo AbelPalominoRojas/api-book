@@ -1,25 +1,20 @@
-package com.ironman.book.dto;
+package com.ironman.book.dto.book;
 
+import com.ironman.book.common.page.PageSortRequest;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 // Lombok annotations to reduce boilerplate code
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class BookDetailResponse implements Serializable {
-
-    private Integer id;
-    private String isbn;
+@SuperBuilder
+public class BookPageSortFilterQuery extends PageSortRequest implements Serializable {
     private String title;
     private String authors;
-    private String edition;
     private Integer publicationYear;
     private Integer publisherId;
-    private LocalDateTime createdAt;
-    private Integer status;
 }
