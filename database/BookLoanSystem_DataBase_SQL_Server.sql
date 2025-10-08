@@ -1,10 +1,10 @@
 -- USE master
 -- GO
 
--- CREATE DATABASE BD_BookLoanSystem
+-- CREATE DATABASE DB_BookLoanSystem
 -- GO
 
--- USE BD_BookLoanSystem
+-- USE DB_BookLoanSystem
 -- GO
 
 -- Drop tables if they exist (in reverse dependency order)
