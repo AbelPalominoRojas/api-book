@@ -1,15 +1,17 @@
 -- USE master
 -- GO
 
--- CREATE DATABASE BookLoanSystem
+-- CREATE DATABASE BD_BookLoanSystem
 -- GO
 
--- USE BookLoanSystem
+-- USE BD_BookLoanSystem
 -- GO
 
 -- Drop tables if they exist (in reverse dependency order)
 -- DROP TABLE loan_details;
 -- DROP TABLE loans;
+-- DROP TABLE users;
+-- DROP TABLE profiles;
 -- DROP TABLE borrowers;
 -- DROP TABLE books;
 -- DROP TABLE publishers;
@@ -17,19 +19,20 @@
 -- Publishers table (formerly editoriales)
 CREATE TABLE publishers (
     id INT IDENTITY,
-    publisher_code NVARCHAR(10),
+    publisher_code NVARCHAR(10) NOT NULL,
     publisher_name NVARCHAR(150),
     created_at DATETIME DEFAULT GETDATE(),
     status INT DEFAULT 1,
-    
-    CONSTRAINT pk_publishers PRIMARY KEY (id)
+
+    CONSTRAINT pk_publishers PRIMARY KEY (id),
+    constraint publishers_publisher_code_uq UNIQUE (publisher_code)
 )
-GO
+    GO
 
 -- Books table (formerly libros)
 CREATE TABLE books (
     id INT IDENTITY,
-    isbn NVARCHAR(100),
+    isbn NVARCHAR(100) NOT NULL,
     title NVARCHAR(300),
     authors NVARCHAR(300),
     edition NVARCHAR(100),
@@ -37,11 +40,11 @@ CREATE TABLE books (
     publisher_id INT NOT NULL,
     created_at DATETIME DEFAULT GETDATE(),
     status INT DEFAULT 1,
-    
-    CONSTRAINT pk_books PRIMARY KEY (id),
-    CONSTRAINT fk_books_publisher_id FOREIGN KEY (publisher_id) REFERENCES publishers(id)
+
+   CONSTRAINT pk_books PRIMARY KEY (id),
+   CONSTRAINT fk_books_publisher_id FOREIGN KEY (publisher_id) REFERENCES publishers(id)
 )
-GO
+    GO
 
 -- Borrowers table (formerly solicitantes)
 CREATE TABLE borrowers (
@@ -52,10 +55,41 @@ CREATE TABLE borrowers (
     phone_number NVARCHAR(20),
     created_at DATETIME DEFAULT GETDATE(),
     status INT DEFAULT 1,
-    
-    CONSTRAINT pk_borrowers PRIMARY KEY (id)
+
+   CONSTRAINT pk_borrowers PRIMARY KEY (id)
 )
-GO
+    GO
+
+-- Profiles table (formerly perfiles)
+create table profiles
+(
+    id INT IDENTITY,
+    name NVARCHAR(200)  NOT NULL,
+    description NVARCHAR(1000),
+    created_at DATETIME DEFAULT GETDATE(),
+    status INT DEFAULT 1,
+
+    constraint profiles_pk PRIMARY KEY (id),
+    constraint profiles_name_uq UNIQUE (name)
+);
+
+-- Users table (formerly usuarios)
+create table users
+(
+    id INT IDENTITY,
+    name NVARCHAR(200) not null,
+    last_name NVARCHAR(200),
+    email NVARCHAR(100) not null,
+    password NVARCHAR(200) not null,
+    profile_id INT NOT NULL,
+    created_at DATETIME DEFAULT GETDATE(),
+    status INT DEFAULT 1,
+
+    constraint users_pk PRIMARY KEY (id),
+    constraint users_profile_id_fk FOREIGN KEY (profile_id) REFERENCES profiles (id),
+    constraint users_email_uq UNIQUE (email)
+);
+
 
 -- Loans table (formerly prestamos)
 CREATE TABLE loans (
@@ -64,13 +98,15 @@ CREATE TABLE loans (
     due_date DATETIME,
     loan_status INT DEFAULT 0, -- {0=active_loan, 1=returned, 2=partially_returned}
     borrower_id INT NOT NULL,
+    user_id INT NOT NULL,
     created_at DATETIME DEFAULT GETDATE(),
     status INT DEFAULT 1,
-    
+
     CONSTRAINT pk_loans PRIMARY KEY (id),
-    CONSTRAINT fk_loans_borrower_id FOREIGN KEY (borrower_id) REFERENCES borrowers(id)
+    CONSTRAINT fk_loans_borrower_id FOREIGN KEY (borrower_id) REFERENCES borrowers(id),
+    CONSTRAINT fk_loans_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 )
-GO
+    GO
 
 -- Loan Details table (formerly prestamos_detalles)
 CREATE TABLE loan_details (
@@ -80,12 +116,12 @@ CREATE TABLE loan_details (
     late_fee DECIMAL(12,2) DEFAULT 0,
     created_at DATETIME DEFAULT GETDATE(),
     status INT DEFAULT 1,
-    
+
     CONSTRAINT pk_loan_details PRIMARY KEY (loan_id, book_id),
     CONSTRAINT fk_loan_details_loan_id FOREIGN KEY (loan_id) REFERENCES loans(id),
     CONSTRAINT fk_loan_details_book_id FOREIGN KEY (book_id) REFERENCES books(id)
 )
-GO
+    GO
 
 
 
@@ -1357,41 +1393,60 @@ insert into borrowers (id, full_name, identity_document, email, phone_number) va
 insert into borrowers (id, full_name, identity_document, email, phone_number) values (258,'Laura Rodriguez Negrete','No disponible','lrodriguez@uach.cl','221943');
 insert into borrowers (id, full_name, identity_document, email, phone_number) values (259,'Juan Albornoz Robertson','No disponible','-','-');
 
-SET IDENTITY_INSERT borrowers  OFF 
+SET IDENTITY_INSERT borrowers  OFF
+GO
+
+-- select * from profiles;
+
+SET IDENTITY_INSERT profiles ON;
+INSERT INTO profiles (id, name, status, created_at) VALUES (1, 'Administrador sistema', 1, GETDATE());
+INSERT INTO profiles (id, name, status, created_at) VALUES (2, 'Administrador', 1, GETDATE());
+INSERT INTO profiles (id, name, status, created_at) VALUES (3, 'Moderador', 1, GETDATE());
+INSERT INTO profiles (id, name, status, created_at) VALUES (4, 'Usuario Avanzado', 1, GETDATE());
+INSERT INTO profiles (id, name, status, created_at) VALUES (5, 'Usuario Estándar', 1, GETDATE());
+INSERT INTO profiles (id, name, status, created_at) VALUES (6, 'Editor', 1, GETDATE());
+INSERT INTO profiles (id, name, status, created_at) VALUES (7, 'Consulta', 1, GETDATE());
+INSERT INTO profiles (id, name, status, created_at) VALUES (8, 'Invitado', 1, GETDATE());
+SET IDENTITY_INSERT profiles OFF;
 GO
 
 
+-- select * from users;
+SET IDENTITY_INSERT users ON;
+INSERT INTO users (id, name, last_name, email, password, profile_id, created_at, status) VALUES (1, 'Abel', 'Palomino', 'abelpalomino@mail.com','admin123', 1, GETDATE(), 1);
+SET IDENTITY_INSERT users OFF;
+GO
 
 -- select * from loans;
 
 -- select * from loan_details;
 
-SET IDENTITY_INSERT loans  ON 
+SET IDENTITY_INSERT loans  ON
 GO
 
-insert into loans (id, due_date, loan_status, borrower_id) values (1, dateadd(hour, 4,getdate()), 1, 1);
+insert into loans (id, due_date, loan_status, borrower_id, user_id) values (1, dateadd(hour, 4,getdate()), 1, 1, 1);
 insert into loan_details (loan_id, book_id, is_returned) values (1, 2, 1);
 insert into loan_details (loan_id, book_id, is_returned) values (1, 7, 1);
 insert into loan_details (loan_id, book_id, is_returned) values (1, 5, 1);
 
 
-insert into loans (id, due_date, loan_status, borrower_id) values (2, dateadd(hour, 4,getdate()), 1, 4);
+insert into loans (id, due_date, loan_status, borrower_id, user_id) values (2, dateadd(hour, 4,getdate()), 1, 4, 1);
 insert into loan_details (loan_id, book_id, is_returned) values (2, 11, 1);
 insert into loan_details (loan_id, book_id, is_returned) values (2, 33, 1);
 insert into loan_details (loan_id, book_id, is_returned) values (2, 51, 1);
 insert into loan_details (loan_id, book_id, is_returned) values (2, 16, 1);
 insert into loan_details (loan_id, book_id, is_returned) values (2, 19, 1);
 
-insert into loans (id, borrower_id) values (3, 8);
+insert into loans (id, borrower_id, user_id) values (3, 8, 1);
 insert into loan_details (loan_id, book_id) values (3, 2);
 insert into loan_details (loan_id, book_id) values (3, 51);
 
-insert into loans (id, borrower_id) values (4, 6);
+insert into loans (id, borrower_id, user_id) values (4, 6, 1);
 insert into loan_details (loan_id, book_id) values (4, 7);
 insert into loan_details (loan_id, book_id) values (4, 16);
 insert into loan_details (loan_id, book_id) values (4, 5);
 insert into loan_details (loan_id, book_id) values (4, 33);
 
-SET IDENTITY_INSERT loans  OFF  
+SET IDENTITY_INSERT loans  OFF
 GO
 
