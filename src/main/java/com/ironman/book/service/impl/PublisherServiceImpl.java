@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.ironman.book.util.Constant.PUBLISHER_NOT_FOUND_BY_ID;
+
 // Lombok annotations
 @RequiredArgsConstructor
 
@@ -104,6 +106,6 @@ public class PublisherServiceImpl implements PublisherService {
 
     private Publisher getPublisherOrThrow(Integer id) {
         return publisherRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Publisher not found with id: " + id));
+                .orElseThrow(() -> new DataNotFoundException(PUBLISHER_NOT_FOUND_BY_ID + id));
     }
 }

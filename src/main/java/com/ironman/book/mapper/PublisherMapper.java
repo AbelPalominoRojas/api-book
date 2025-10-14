@@ -26,6 +26,7 @@ public interface PublisherMapper {
     @Mapping(target = "name", source = "publisherName")
     PublisherDetailResponse toDetailResponse(Publisher publisher);
 
+    @Mapping(target = "name", source = "publisherName")
     PublisherResponse toResponse(Publisher publisher);
 
     @Mapping(target = "publisherCode", source = "code")

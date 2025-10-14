@@ -13,5 +13,6 @@ import java.io.Serializable;
 public class PublisherResponse implements Serializable {
 
     private Integer id;
+    private String name;
     private Integer status;
 }
