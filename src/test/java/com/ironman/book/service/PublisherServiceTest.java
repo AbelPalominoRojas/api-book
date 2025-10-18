@@ -6,6 +6,9 @@ import com.ironman.book.dto.publisher.PublisherRequest;
 import com.ironman.book.dto.publisher.PublisherResponse;
 import com.ironman.book.entity.Publisher;
 import com.ironman.book.exception.DataNotFoundException;
+import com.ironman.book.exception.DataUniqueException;
+import com.ironman.book.exception.DatabaseUnexpectedException;
+import com.ironman.book.exception.UnexpectedException;
 import com.ironman.book.mapper.PublisherMapperImpl;
 import com.ironman.book.mock.PublisherMock;
 import com.ironman.book.repository.PublisherRepository;
@@ -15,12 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.ironman.book.util.Constant.PUBLISHER_NOT_FOUND_BY_ID;
+import static com.ironman.book.util.Constant.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -156,6 +160,57 @@ class PublisherServiceTest {
         var exception = assertThrows(
                 DataNotFoundException.class,
                 () -> publisherService.findById(publisherId)
+        );
+
+        assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    void returnErrorWhenDatabaseErrorOnFindAll() {
+        // Arrange
+        DataIntegrityViolationException expectedException = new DataIntegrityViolationException("DB error");
+
+        given(publisherRepository.findAll()).willThrow(expectedException);
+
+        // Act & Assert
+        var exception = assertThrows(
+                DatabaseUnexpectedException.class,
+                () -> publisherService.findAll()
+        );
+
+        assertEquals(DATABASE_UNEXPECTED_ERROR, exception.getMessage());
+    }
+
+    @Test
+    void returnErrorWhenUnexpectedErrorOnFindById() {
+        // Arrange
+        Integer publisherId = 1;
+        RuntimeException unexpectedException = new RuntimeException("Unexpected error");
+
+        given(publisherRepository.findById(anyInt())).willThrow(unexpectedException);
+
+        // Act & Assert
+        var exception = assertThrows(
+                UnexpectedException.class,
+                () -> publisherService.findById(publisherId)
+        );
+
+        assertEquals(UNEXPECTED_ERROR, exception.getMessage());
+    }
+
+    @Test
+    void returnErrorWhenDuplicatePublisherCodeOnCreate() {
+        // Arrange
+        PublisherRequest publisherRequest = PublisherMock.getPublisherRequest();
+        String expectedMessage = PUBLISHER_CODE_EXISTS + publisherRequest.getCode();
+
+        given(publisherRepository.findByPublisherCode(anyString()))
+                .willReturn(Optional.of(PublisherMock.getPublisher()));
+
+        // Act & Assert
+        var exception = assertThrows(
+                DataUniqueException.class,
+                () -> publisherService.create(publisherRequest)
         );
 
         assertEquals(expectedMessage, exception.getMessage());

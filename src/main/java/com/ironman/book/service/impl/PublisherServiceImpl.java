@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.ironman.book.util.Constant.PUBLISHER_CODE_EXISTS;
 import static com.ironman.book.util.Constant.PUBLISHER_NOT_FOUND_BY_ID;
 
 // Lombok annotations
@@ -60,7 +61,7 @@ public class PublisherServiceImpl implements PublisherService {
             publisherRepository
                     .findByPublisherCode(publisherRequest.getCode())
                     .ifPresent(p -> {
-                        throw new DataUniqueException("Publisher code already exists: " + publisherRequest.getCode());
+                        throw new DataUniqueException(PUBLISHER_CODE_EXISTS + publisherRequest.getCode());
                     });
 
             Publisher publisher = publisherMapper.toEntity(publisherRequest);
