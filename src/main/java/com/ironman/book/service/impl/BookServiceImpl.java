@@ -6,9 +6,11 @@ import com.ironman.book.dto.book.*;
 import com.ironman.book.entity.Book;
 import com.ironman.book.entity.emuns.BookSortField;
 import com.ironman.book.entity.projection.BookOverviewProjection;
+import com.ironman.book.exception.DataNotFoundException;
 import com.ironman.book.mapper.BookMapper;
 import com.ironman.book.repository.BookRepository;
 import com.ironman.book.service.BookService;
+import com.ironman.book.service.PublisherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +28,7 @@ public class BookServiceImpl extends PagingAndSortingBuilder implements BookServ
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final PublisherService publisherService;
 
     @Override
     public List<BookSummaryResponse> findAll() {
@@ -45,7 +48,8 @@ public class BookServiceImpl extends PagingAndSortingBuilder implements BookServ
     @Override
     public BookResponse create(BookRequest bookRequest) {
         Book book = bookMapper.toEntity(bookRequest);
-        book.setStatus(1);
+
+        publisherService.findById(book.getPublisherId());
 
         Book savedBook = bookRepository.save(book);
 
@@ -55,6 +59,8 @@ public class BookServiceImpl extends PagingAndSortingBuilder implements BookServ
     @Override
     public BookResponse update(Integer id, BookRequest bookRequest) {
         Book foundBook = getBookOrElseThrow(id);
+
+        publisherService.findById(bookRequest.getPublisherId());
 
         bookMapper.updateEntity(foundBook, bookRequest);
 
@@ -187,6 +193,6 @@ public class BookServiceImpl extends PagingAndSortingBuilder implements BookServ
 
     private Book getBookOrElseThrow(Integer id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+                .orElseThrow(() -> new DataNotFoundException("Book not found with id: " + id));
     }
 }

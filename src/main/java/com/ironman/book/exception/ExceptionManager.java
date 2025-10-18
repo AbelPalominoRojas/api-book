@@ -3,6 +3,9 @@ package com.ironman.book.exception;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import static com.ironman.book.util.Constant.DATABASE_UNEXPECTED_ERROR;
+import static com.ironman.book.util.Constant.UNEXPECTED_ERROR;
+
 public class ExceptionManager {
     private ExceptionManager() {
     }
@@ -12,11 +15,11 @@ public class ExceptionManager {
                 ex instanceof DataIntegrityViolationException
                         || ex instanceof SQLServerException
         ) {
-            return new UnexpectedException("An unexpected error occurred in the database service.");
+            return new DatabaseUnexpectedException(DATABASE_UNEXPECTED_ERROR);
         } else if (ex instanceof AppBaseException) {
             return (AppBaseException) ex;
         } else {
-            return new UnexpectedException("An unexpected error occurred, please try again later.");
+            return new UnexpectedException(UNEXPECTED_ERROR);
         }
     }
 }
