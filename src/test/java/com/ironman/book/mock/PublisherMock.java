@@ -1,5 +1,6 @@
 package com.ironman.book.mock;
 
+import com.ironman.book.dto.publisher.PublisherDetailResponse;
 import com.ironman.book.dto.publisher.PublisherRequest;
 import com.ironman.book.entity.Publisher;
 import com.ironman.book.util.StatusEnum;
@@ -28,6 +29,16 @@ public class PublisherMock {
         return PublisherRequest.builder()
                 .code("MARV001")
                 .name("Marvel Comics")
+                .build();
+    }
+
+    public static PublisherDetailResponse getPublisherDetailResponse() {
+        return PublisherDetailResponse.builder()
+                .id(1)
+                .code("MARV001")
+                .name("Marvel Comics")
+                .createdAt(LocalDateTime.now())
+                .status(StatusEnum.ENABLED.getValue())
                 .build();
     }
 }
