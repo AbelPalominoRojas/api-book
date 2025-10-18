@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=db_test;encrypt=true;trustServerCertificate=true
+    username: user_test
+    password: pass_test
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        format_sql: true
+
+app:
+  profile-default: 6
+
+
+jwt:
+  secret-key: TEST-SECRET-KEY-FOR-UNIT-TESTING
+  expiration-minutes: 60
